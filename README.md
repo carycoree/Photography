@@ -18,6 +18,10 @@
 
 這是帶有後端的網站，使用 **Cloudflare Workers + D1 + R2 + Access**。不要把整包當作純靜態網站拖進 Pages。
 
+### 建置錯誤修正
+
+如果舊版部署記錄顯示 `ENOENT: no such file or directory, lstat '.openai/hosting.json'`，請以本包的 `scripts/build.mjs` 取代 GitHub 儲存庫中的同名檔案，再重新執行 `npm run build`。修正版在缺少該檔案時仍可建置；自己的 Cloudflare 部署使用根目錄的 `wrangler.jsonc`。請保留你已填好的資料庫、照片空間與登入設定。
+
 | 資源 | 用途 | 程式綁定名稱 |
 |---|---|---|
 | Worker | 網站、管理 API、照片讀取 | — |
@@ -155,6 +159,7 @@ npm run deploy
 
 ```powershell
 npm run build
+node tests/build.mjs
 npm test
 node tests/i18n.mjs
 ```
