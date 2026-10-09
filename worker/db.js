@@ -1,0 +1,6 @@
+import { HttpError } from './auth.js';
+export function database(env){if(!env.DB)throw new HttpError(503,'作品資料暫時無法使用，請稍後重試。');return env.DB;}
+export function bucket(env){if(!env.BUCKET)throw new HttpError(503,'照片儲存空間暫時無法使用，請稍後重試。');return env.BUCKET;}
+export function photograph(row,admin=false){const base=admin?'/api/admin/media/':'/media/';return {id:row.id,title:row.title,titleEn:row.title_en||'',descriptionEn:row.description_en||'',locationEn:row.location_en||'',category:row.category,description:row.description,location:row.location,takenAt:row.taken_at,src:base+row.original_key,thumbnail:base+row.thumbnail_key,large:base+row.large_key,width:row.width,height:row.height,bytes:row.bytes,published:!!row.published,position:row.position,version:row.version,createdAt:row.created_at,updatedAt:row.updated_at};}
+export async function listPhotos(env,all=false){const {results}=await database(env).prepare(`SELECT * FROM photographs ${all?'':'WHERE published = 1'} ORDER BY position ASC, created_at ASC, id ASC`).all();return results.map(row=>photograph(row,all));}
+export async function coverId(env){const r=await database(env).prepare("SELECT value FROM settings WHERE key = 'cover_id'").first();return r?.value||null;}
